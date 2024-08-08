@@ -21,4 +21,5 @@ const checkUsername = async (req, res, next) => {
   next();
 };
 
+
 module.exports = { checkUserData, checkUsername };

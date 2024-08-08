@@ -9,44 +9,41 @@ In the email above, Calliope has requested that you build the back end first at 
 
 *AS A USER (NOT LOGGED IN), I SHOULD BE ABLE TO:*
 Access the website via the Internet so I can browse and read reviews.
-    - Get all items - findMany
-    - Get all reviews - findMany
+    - Get all items - findMany - api/items
+    - Get all reviews - findMany api/reviews/
 View details for a specific reviewed item (store, restaurant, product, book, etc.)
-    - Get item - findUnique
+    - Get item - findUnique - api/item/id
 I should be able to see the item’s average score or rating.
-    - Get item - will need to call on all reviews with item_id
+    - Get item - will need to call on all reviews with item_id - api/item/id
 I should be able to see any relevant information about the item.
     - Get item - findUnique
     - Get reviews with item_id
-    - Get comments tied to reviews with item_id
 Search for specific items, so I can see their scores and read reviews about them.
-    - Get all items - findMany
-    - Get item - findUnique
+    - Get  items - findMany api/items/name
 Sign up for an account so I can have a logged-in experience.
-    - Post user - create
+    - Post user - create - api/auth/register
 Log in to the site if I already have an account.
-    - Get user - user tokens
+    - Get user - user tokens - api/auth/login
 
 *AS A LOGGED-IN USER, I SHOULD BE ABLE TO:*
+
 Write and submit a review for an item that includes:
     A written text review
     A score/rating
-        - Post review - create
+        - Post review - create - api/reviews/
 Only one review should be allowed per item, per user
 View a list of all reviews I have written.
-    - Get all reviews with user_id
+    - Get all reviews with user_id api/reviews/:user_id
 Delete reviews I have written.
-    - Delete review
+    - Delete review api/reviews/:id
 Edit reviews I have written.
-    - Put review
 Change the text review.
-    - Put review txt field - clarify how this is different
 Modify the score/rating.
-    - Put review score field
+    - Put review api/reviews/:id
 Write comments on reviews written by others.
-    - Post comment
+    - Post comment - api/comments/:item_id
 View a list of all comments I have written.
-    - Get All comments with user_id
+    - Get All comments with user_id - api/comments/:user_id
 Edit and delete my comments.
-    - Put comment
-    - Delete comment
+    - Put comment - api/comments/:id
+    - Delete comment api/comments/:id
