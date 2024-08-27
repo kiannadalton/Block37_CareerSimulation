@@ -2,74 +2,83 @@ const express = require("express");
 const reviewsRouter = express.Router();
 const {
   createReview,
-  getAllReviews,
-  getReviewById,
+  getReviewByItemId,
+  getReviewByUserId,
   updateReview,
   deleteReview,
 } = require("../db/reviews");
 
-const { requireUser } = require("./utils");
+const { verifyUser } = require("./auth/verifyUser");
 
-
-// GET /api/reviews
-reviewsRouter.get("/", async (req, res, next) => {
-  try {
-    const reviews = await getAllReviews(req.user.user_id);
-
-    res.send({ reviews });
-  } catch (error) {
-        console.log(error);
-        res
-          .status(500)
-          .send({ error, message: "Could not retrieve comments." });  
-        }
-});
-
+// works 
 // POST /api/reviews
-reviewsRouter.post("/", async (req, res, next) => {
+reviewsRouter.post("/:id", verifyUser, async (req, res) => {
   try {
-    const review = await createReview({ ...req.body, user_id: req.user.user_id });
+    console.log(req.user);
+    const review = await createReview({
+      ...req.body,
+      item_id: req.params.id,
+    });
 
-    res.send({ review });
+    res.status(200).send({ review });
   } catch (error) {
-        console.log(error);
-        res
-          .status(500)
-          .send({ error, message: "Could not add review." });   
+    console.log(error);
+    res.status(500).send({ error, message: "Could not add review." });
   }
 });
 
+// works
+// Get all reviews a user had made
 // GET /api/reviews/:id
-reviewsRouter.get("/:id", requireUser, async (req, res, next) => {
+reviewsRouter.get("/:id", verifyUser, async (req, res) => {
   try {
-    const review = await getReviewById(req.params.id);
+    const review = await getReviewByUserId(req.params.id);
 
     res.send({ review });
   } catch (error) {
-        console.log(error);
-        res
-          .status(500)
-          .send({ error, message: "Could not retrieve all of your comments." });  }
+    console.log(error);
+    res
+      .status(500)
+      .send({ error, message: "Could not retrieve all of your reviews." });
+  }
 });
 
+// works
+// GET /api/reviews/:id/reviews
+reviewsRouter.get("/:id/reviews", async (req, res) => {
+  try {
+    const comment = await getReviewByItemId(req.params.id);
+
+    res.send({ comment });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ error, message: "Could not retrieve all of your comments." });
+  }
+});
+
+// works
 // PUT /api/reviews/:id
-reviewsRouter.put("/:id", requireUser, async (req, res, next) => {
+reviewsRouter.put("/:id", verifyUser, async (req, res) => {
   try {
     //makes sure to pull out only the columns for our review from the req.body
-    const { score, txt} = req.body;
+    const { score, txt } = req.body;
     const review = await updateReview(req.params.id, {
       score,
-      txt
+      txt,
     });
 
     res.send({ review });
   } catch (error) {
-        console.log(error);
-        res.status(500).send({ error, message: "Could not update review." });  }
+    console.log(error);
+    res.status(500).send({ error, message: "Could not update review." });
+  }
 });
 
+// works
 // DELETE /api/reviews/:id
-reviewsRouter.delete("/:id", requireUser, async (req, res, next) => {
+reviewsRouter.delete("/:id", verifyUser, async (req, res, next) => {
   try {
     const review = await deleteReview(req.params.id);
 

@@ -25,14 +25,5 @@ const findItembyId = (id) => {
     });
 };
 
-const findItembyName = (name) => {
-    return prisma.items.findFirst({
-      where: { name },
-      include: {
-        reviews: true,
-      },
-    });
-};
 
-
-module.exports = { findItembyId, findItembyName, findAllItems}
+module.exports = { findItembyId, findAllItems}

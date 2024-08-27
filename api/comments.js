@@ -3,65 +3,79 @@ const commentsRouter = express.Router();
 const {
   createComment,
   getAllComments,
-  getCommentById,
+  getCommentByReviewId,
   updateComment,
   deleteComment,
 } = require("../db/comments");
 
+const { verifyUser } = require("./auth/verifyUser");
+
+// works
 // GET /api/comments
-commentsRouter.get("/", async (req, res ) => {
+commentsRouter.get("/:id", verifyUser, async (req, res) => {
   try {
-    const comments = await getAllComments(req.user.user_id);
+    const comments = await getAllComments(req.params.id);
 
     res.send({ comments });
   } catch (error) {
-        console.log(error);
-        res.status(500).send({ error, message: "Could not retrieve comments." });
+    console.log(error);
+    res.status(500).send({ error, message: "Could not retrieve comments." });
   }
 });
 
+//works
 // POST /api/comments
-commentsRouter.post("/", async (req, res ) => {
+commentsRouter.post("/:id", verifyUser, async (req, res) => {
   try {
-    const comment = await createComment({ ...req.body, user_id: req.user.user_id });
+    console.log(req.user);
 
-    res.send({ comment });
+    const comment = await createComment({
+      ...req.body,
+      review_id: req.params.id,
+    });
+
+    res.status(200).send({ comment });
   } catch (error) {
-        console.log(error);
-        res.status(500).send({ error, message: "Could not add comment." });
+    console.log(error);
+    res.status(500).send({ error, message: "Could not add comment." });
   }
 });
 
-// GET /api/comments/:id
-commentsRouter.get("/:id", async (req, res ) => {
+// works
+// GET /api/comments/:id/comments
+commentsRouter.get("/:id/comments", async (req, res) => {
   try {
-    const comment = await getCommentById(req.params.id);
+    const comment = await getCommentByReviewId(req.params.id);
 
     res.send({ comment });
   } catch (error) {
-        console.log(error);
-        res.status(500).send({ error, message: "Could not retrieve all of your comments." });
+    console.log(error);
+    res
+      .status(500)
+      .send({ error, message: "Could not retrieve all of your comments." });
   }
 });
 
+// works
 // PUT /api/comments/:id
-commentsRouter.put("/:id", async (req, res) => {
+commentsRouter.put("/:id", verifyUser, async (req, res) => {
   try {
     //makes sure to pull out only the columns for our comment from the req.body
     const { comment } = req.body;
     const userComment = await updateComment(req.params.id, {
-      comment
+      comment,
     });
 
     res.send({ userComment });
   } catch (error) {
-        console.log(error);
-        res.status(500).send({ error, message: "Could not update comment." });
+    console.log(error);
+    res.status(500).send({ error, message: "Could not update comment." });
   }
 });
 
-// DELETE /api/plants/:id
-commentsRouter.delete("/:id", async (req, res, next) => {
+// works
+// DELETE /api/comments/:id
+commentsRouter.delete("/:id", verifyUser, async (req, res, next) => {
   try {
     const comment = await deleteComment(req.params.id);
 

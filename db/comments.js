@@ -6,21 +6,27 @@ const createComment = (commentData) => {
   });
 };
 
-const getAllComments = (user_id) => {
+const getAllComments = (author_id) => {
   return prisma.comments.findMany({
-    where: { user_id },
+    where: { author_id },
+  });
+};
+
+const getCommentByReviewId = (review_id) => {
+  return prisma.comments.findMany({
+    where: { review_id },
   });
 };
 
 const getCommentById = (id) => {
-  return prisma.comments.findUnique({
-    where: { id: id },
+  return prisma.comments.findMany({
+    where: { id },
   });
 };
 
 const updateComment = (id, commentData) => {
   return prisma.comments.update({
-    where: { id: id },
+    where: { id },
     data: commentData,
   });
 };
@@ -38,6 +44,7 @@ const deleteComment = async (id) => {
 module.exports = {
   createComment,
   getAllComments,
+  getCommentByReviewId,
   getCommentById,
   updateComment,
   deleteComment,

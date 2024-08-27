@@ -1,20 +1,26 @@
 const prisma = require("./index");
 
-const createReview = (reviewData) => {
-  return prisma.reviews.create({
-    data: reviewData,
+const getReviewById = (id) => {
+  return prisma.reviews.findUnique({
+    where: { id },
   });
 };
 
-const getAllReviews = (user_id) => {
+const getReviewByUserId = (user_id) => {
   return prisma.reviews.findMany({
     where: { user_id },
   });
 };
 
-const getReviewById = (item_id) => {
-  return prisma.reviews.findUnique({
+const getReviewByItemId = (item_id) => {
+  return prisma.reviews.findMany({
     where: { item_id },
+  });
+};
+
+const createReview = (reviewData) => {
+  return prisma.reviews.create({
+    data: reviewData,
   });
 };
 
@@ -29,16 +35,17 @@ const deleteReview = async (id) => {
   const review = await getReviewById(id);
   if (review) {
     return prisma.reviews.delete({
-      where: { id: id },
+      where: { id },
     });
   }
   return;
 };
 
 module.exports = {
-  createReview,
-  getAllReviews,
   getReviewById,
+  getReviewByUserId,
+  getReviewByItemId,
   updateReview,
   deleteReview,
+  createReview,
 };

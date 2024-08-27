@@ -1,15 +1,11 @@
-const express = require('express');
+const express = require("express");
+const apiRouter = express.Router();
 const jwt = require("jsonwebtoken");
 const { findUserById } = require("../db/users");
-const apiRouter = express.Router();
-const { requireUser } = require("./utils");
-
 
 // routes
 // path api/auth , sending it to auth/auth.js
-const authRouter = require("./auth/auth");
-
-apiRouter.use('/auth', authRouter);
+apiRouter.use("/auth", require("./auth/auth"));
 
 // new notes and updates
 // set `req.user` if possible
@@ -17,56 +13,54 @@ apiRouter.use(async (req, res, next) => {
   const prefix = "Bearer ";
   const auth = req.header("Authorization");
 
+  // if request does not need auth header, move on
   if (!auth) {
-    // nothing to see here
     next();
   } else if (auth.startsWith(prefix)) {
     const token = auth.slice(prefix.length);
 
     try {
+      console.log(token);
       const { id } = jwt.verify(
         token,
-        process.env.JWT || "super duper secret"
+        process.env.JWT || "Super secret super safe"
       );
 
+      console.log(id);
+      //   if id is successfully made, set req.user
       if (id) {
+        console.log(id);
         req.user = await findUserById(id);
+        console.log(req.user);
         next();
       } else {
-        next({
+        // 400 status on bad request
+        res.status(400).send({
           name: "AuthorizationHeaderError",
-          message: "Authorization token malformed",
+          message: "Authorization Token Malformed",
         });
       }
     } catch (error) {
-        console.log(error);
-        res
-          .status(500)
-          .send({ error, message: "Could not authorize user." });
+      console.log(error);
+      next();
     }
-  } 
+  } else {
+    // 400 status on bad request
+    res.status(400).send({
+      name: "AuthorizationHeaderError",
+      message: `Authorization token must start with ${prefix}`,
+    });
+  }
 });
 
-const commentsRouter = require("./comments");
+apiRouter.use("/comments", require("./comments"));
 
-const reviewsRouter = require("./reviews");
+apiRouter.use("/reviews", require("./reviews"));
 
-const itemRouter = require("./items");
+apiRouter.use("/items", require("./items"));
 
-apiRouter.use("/reviews", reviewsRouter)
-
-apiRouter.use("/items", itemRouter);
-
-/**
- * Since all comments routes need authorization we will
- * require a user on all routes here instead of inside
- * comments.js
- */
-apiRouter.use("/comments", requireUser, commentsRouter);
-
-apiRouter.use((error, req, res, next) => {
-  res.send(error);
-});
-
+// apiRouter.use((error, req, res, next) => {
+//   res.send(error);
+// });
 
 module.exports = apiRouter;

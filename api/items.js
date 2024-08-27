@@ -1,14 +1,14 @@
 // router.get
 const express = require("express");
 const itemRouter = express.Router();
+const reviewsRouter = express.Router();
+
 const {
   findItembyId,
-  findItembyName,
   findAllItems,
 } = require("../db/items.js");
 
-
-
+// works
 // GET /api/items/
 itemRouter.get("/", async (req, res) => {
   try {
@@ -21,18 +21,7 @@ itemRouter.get("/", async (req, res) => {
   }
 });
 
-// GET /api/items/name
-itemRouter.get("/name", async (req, res) => {
-  try {
-    const itemName = await findItembyName(req.body.name);
-
-    res.send({ itemName });
-  } catch (error) {
-    console.log(error);
-    res.status(404).send({ error, message: "No items found with that name." });
-  }
-});
-
+// works
 // GET /api/items/:id
 itemRouter.get("/:id", async (req, res) => {
   try {
@@ -44,5 +33,6 @@ itemRouter.get("/:id", async (req, res) => {
     res.status(404).send({ error, message: "Item not found." });
   }
 });
+
 
 module.exports = itemRouter;
