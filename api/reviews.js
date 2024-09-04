@@ -10,14 +10,15 @@ const {
 
 const { verifyUser } = require("./auth/verifyUser");
 
-// works 
+// working with new endpoint and pulls item_id from body
 // POST /api/reviews
-reviewsRouter.post("/:id", verifyUser, async (req, res) => {
+reviewsRouter.post("/", verifyUser, async (req, res) => {
   try {
     console.log(req.user);
     const review = await createReview({
       ...req.body,
-      item_id: req.params.id,
+      user_id: req.user.id,
+      item_id: req.body.item_id,
     });
 
     res.status(200).send({ review });

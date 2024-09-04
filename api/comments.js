@@ -10,11 +10,11 @@ const {
 
 const { verifyUser } = require("./auth/verifyUser");
 
-// works
+// works with new endpoint and pulls author_id from user.id
 // GET /api/comments
-commentsRouter.get("/:id", verifyUser, async (req, res) => {
+commentsRouter.get("/", verifyUser, async (req, res) => {
   try {
-    const comments = await getAllComments(req.params.id);
+    const comments = await getAllComments(req.user.id);
 
     res.send({ comments });
   } catch (error) {
@@ -23,15 +23,16 @@ commentsRouter.get("/:id", verifyUser, async (req, res) => {
   }
 });
 
-//works
+//working with new end point and pulling review_id from body
 // POST /api/comments
-commentsRouter.post("/:id", verifyUser, async (req, res) => {
+commentsRouter.post("/", verifyUser, async (req, res) => {
   try {
     console.log(req.user);
 
     const comment = await createComment({
       ...req.body,
-      review_id: req.params.id,
+      author_id: req.user.id,
+      review_id: req.body.review_id,
     });
 
     res.status(200).send({ comment });
