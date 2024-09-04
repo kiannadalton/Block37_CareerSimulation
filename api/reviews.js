@@ -31,9 +31,9 @@ reviewsRouter.post("/", verifyUser, async (req, res) => {
 // works
 // Get all reviews a user had made
 // GET /api/reviews/:id
-reviewsRouter.get("/:id", verifyUser, async (req, res) => {
+reviewsRouter.get("/", verifyUser, async (req, res) => {
   try {
-    const review = await getReviewByUserId(req.params.id);
+    const review = await getReviewByUserId(req.user.id);
 
     res.send({ review });
   } catch (error) {
