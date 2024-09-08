@@ -1,12 +1,15 @@
 // router.get
 const express = require("express");
 const itemRouter = express.Router();
-const reviewsRouter = express.Router();
+const { verifyUser } = require("./auth/verifyUser");
 
 const {
   findItembyId,
   findAllItems,
 } = require("../db/items.js");
+const {
+  createReview
+} = require("../db/reviews");
 
 // works
 // GET /api/items/
@@ -31,6 +34,24 @@ itemRouter.get("/:id", async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(404).send({ error, message: "Item not found." });
+  }
+});
+
+// post review
+// POST /api/items
+itemRouter.post("/:item_id/review", verifyUser, async (req, res) => {
+  try {
+    console.log(req.user);
+    const review = await createReview({
+      ...req.body,
+      user_id: req.user.id,
+      item_id: req.params.item_id,
+    });
+
+    res.status(200).send({ review });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ error, message: "Could not add review." });
   }
 });
 

@@ -12,7 +12,7 @@ const { verifyUser } = require("./auth/verifyUser");
 
 // works with new endpoint and pulls author_id from user.id
 // GET /api/comments
-commentsRouter.get("/", verifyUser, async (req, res) => {
+commentsRouter.get("/mycomments", verifyUser, async (req, res) => {
   try {
     const comments = await getAllComments(req.user.id);
 

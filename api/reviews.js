@@ -10,28 +10,10 @@ const {
 
 const { verifyUser } = require("./auth/verifyUser");
 
-// working with new endpoint and pulls item_id from body
-// POST /api/reviews
-reviewsRouter.post("/", verifyUser, async (req, res) => {
-  try {
-    console.log(req.user);
-    const review = await createReview({
-      ...req.body,
-      user_id: req.user.id,
-      item_id: req.body.item_id,
-    });
-
-    res.status(200).send({ review });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send({ error, message: "Could not add review." });
-  }
-});
-
 // works
 // Get all reviews a user had made
-// GET /api/reviews/:id
-reviewsRouter.get("/", verifyUser, async (req, res) => {
+// GET /api/reviews/myreviews
+reviewsRouter.get("/myreviews", verifyUser, async (req, res) => {
   try {
     const review = await getReviewByUserId(req.user.id);
 
