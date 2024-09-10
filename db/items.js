@@ -1,5 +1,5 @@
 // add alll the functions
-const prisma = require('./index')
+const prisma = require("./index");
 
 // not using, but keeping just in case capstone requires it
 // const createItem = (itemData) => {
@@ -10,20 +10,19 @@ const prisma = require('./index')
 
 const findAllItems = () => {
   return prisma.items.findMany({
-    include:{
-        reviews: true,
-    }
+    include: {
+      reviews: { include: { comments: true } },
+    },
   });
 };
 
 const findItembyId = (id) => {
-    return prisma.items.findUnique({
-      where: {id},
-      include: {
-        reviews: {include:{comments: true}},
-      }
-    });
+  return prisma.items.findUnique({
+    where: { id },
+    include: {
+      reviews: { include: { comments: true } },
+    },
+  });
 };
 
-
-module.exports = { findItembyId, findAllItems}
+module.exports = { findItembyId, findAllItems };

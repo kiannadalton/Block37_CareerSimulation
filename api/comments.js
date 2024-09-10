@@ -25,14 +25,14 @@ commentsRouter.get("/mycomments", verifyUser, async (req, res) => {
 
 //working with new end point and pulling review_id from body
 // POST /api/comments
-commentsRouter.post("/", verifyUser, async (req, res) => {
+commentsRouter.post("/review/:review_id", verifyUser, async (req, res) => {
   try {
     console.log(req.user);
 
     const comment = await createComment({
       ...req.body,
       author_id: req.user.id,
-      review_id: req.body.review_id,
+      review_id: req.params.review_id,
     });
 
     res.status(200).send({ comment });
