@@ -44,6 +44,7 @@ model reviews {
 model items {
   id          String    @id @default(uuid())
   name        String
+  img_url     String
   description String
   reviews     reviews[]
 }

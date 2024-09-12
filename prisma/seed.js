@@ -28,6 +28,7 @@ const main = async () => {
       return prisma.items.create({
         data: {
           name: faker.commerce.product(),
+          img_url: faker.image.urlLoremFlickr(),
           description: faker.commerce.productDescription(),
         },
       });
